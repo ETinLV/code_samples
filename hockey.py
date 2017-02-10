@@ -4,11 +4,11 @@ from pprint import pprint
 
 import requests
 
+STAT_URL = 'https://statsapi.web.nhl.com/api/v1/schedule?startDate=2017-02-09&endDate=2017-02-14&expand=schedule.teams,schedule.linescore,schedule.broadcasts.all,schedule.ticket,schedule.game.content.media.epg,schedule.radioBroadcasts,schedule.decisions,schedule.scoringplays,schedule.game.content.highlights.scoreboard,team.leaders,schedule.game.seriesSummary,seriesSummary.series&leaderCategories=points,goals,assists&leaderGameTypes=R&site=en_nhl&teamId=&gameType=&timecode='
 
 def make_request():
     """Make the request to NHL website"""
-    return requests.get(
-        'https://statsapi.web.nhl.com/api/v1/schedule?startDate=2017-02-09&endDate=2017-02-14&expand=schedule.teams,schedule.linescore,schedule.broadcasts.all,schedule.ticket,schedule.game.content.media.epg,schedule.radioBroadcasts,schedule.decisions,schedule.scoringplays,schedule.game.content.highlights.scoreboard,team.leaders,schedule.game.seriesSummary,seriesSummary.series&leaderCategories=points,goals,assists&leaderGameTypes=R&site=en_nhl&teamId=&gameType=&timecode=')
+    return requests.get(STAT_URL)
 
 
 def parse_response():
