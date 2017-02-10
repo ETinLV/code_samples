@@ -87,3 +87,11 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Direnv files
+/.direnv/
+/.envrc
+
+.DS_Store
+.idea
+
