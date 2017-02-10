@@ -50,18 +50,22 @@ def get_daily_forecast(day):
     return dict_to_utf_8(d)
 
 
-def dict_to_utf_8(dict):
-    """Convert unicode to utf-8, this removes the u'' from printed text"""
-    for key in dict:
-        dict[key] = dict[key].encode('utf-8')
-    return dict
+def dict_to_utf_8(d):
+    """Convert a dict with unicode to utf-8, this removes the u'' from printed text"""
+    for k,v in d.iteritems():
+        if isinstance(v, dict):
+            dict_to_utf_8(v)
+        new_k = k.encode('utf-8', 'ignore') if isinstance(k, unicode) else k
+        d[new_k] = d.pop(k)
+        d[k] = v.encode('utf-8', 'ignore') if isinstance(v, unicode) else v
+    return d
 
 
 if __name__ == '__main__':
-    if sys.argv[1] and sys.argv[2]:
+    try:
         lat = sys.argv[1]
         lon = sys.argv[2]
-    else:
+    except IndexError:
         lat = '36.175'
         lon = '-115.1372'
     pprint(get_forecast(lat, lon))
