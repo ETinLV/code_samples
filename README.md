@@ -23,3 +23,8 @@ Returns the extended weather report for the selected location
 Returns the current scores for all NHL hockey games
 
 `python hockey.py`
+
+##gen_county.py
+Returns active events from the Genessee County 911 Page
+
+`python gen_county.py`
