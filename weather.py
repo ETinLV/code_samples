@@ -1,3 +1,4 @@
+import json
 from pprint import pprint
 
 import requests
@@ -7,58 +8,47 @@ from bs4 import BeautifulSoup
 WEATHER_URL = 'http://forecast.weather.gov/MapClick.php?'
 
 
-def make_request(lat,lon):
+def make_request(lat, lon):
     """Make the request to the weather website"""
-    url = WEATHER_URL + convert_lat_lon(lat, lon)
-    request = requests.get(url)
-    return request
+    url = WEATHER_URL
+    request = requests.get(url, params={'lat': lat, 'lon': lon})
+    return request.content
 
 
-def convert_lat_lon(lat, lon):
-    """Format lat and lon values for query string"""
-    lat_lon = 'lat={}&lon={}'.format(lat, lon)
-    return lat_lon
-
-
-def parse_content(request):
+def parse_content(content):
     """Create Beautiful Soup Object"""
-    return BeautifulSoup(request.content, "html.parser")
+    return BeautifulSoup(content, "html.parser")
 
 
 def get_forecast(lat, lon):
     """Create forecast array"""
-    soup = parse_content(make_request(lat, lon))
+    content = make_request(lat, lon)
+    soup = parse_content(content)
     forecast = soup.find_all(class_="forecast-tombstone")
     forecast_array = []
     for day in forecast:
-        forecast_array.append(get_daily_forecast(day))
-    if len(forecast_array) > 0:
+        daily_forecast = format_daily_forecast(day)
+        forecast_array.append(daily_forecast)
+    if len(forecast_array):
         return forecast_array
-    else:
-        return "No information found for that location"
+    return []
 
 
-def get_daily_forecast(day):
+def format_daily_forecast(day):
     """Compile all forecast data for a day"""
-    d = {}
-    d['time_period'] = day.find(class_='period-name').get_text()
-    d['conditions'] = day.find(class_='short-desc')
-    d['high'] = day.find(class_='temp temp-high').get_text().split(' ')[1] + 'F' if day.find(
-        class_='temp temp-high') else 'null'
-    d['low'] = day.find(class_='temp temp-low').get_text().split(' ')[1] + 'F' if day.find(
-        class_='temp temp-low') else 'null'
-    return dict_to_utf_8(d)
+    d = {
+        'time_period': day.find(class_='period-name').get_text(),
+        'conditions': day.find(class_='short-desc').get_text(),
+        'high': convert_temp(day.find(class_='temp temp-high')),
+        'low': convert_temp(day.find(class_='temp temp-low'))
+    }
+    return json.dumps(d)
 
 
-def dict_to_utf_8(d):
-    """Convert a dict with unicode to utf-8, this removes the u'' from printed text"""
-    for k,v in d.iteritems():
-        if isinstance(v, dict):
-            dict_to_utf_8(v)
-        new_k = k.encode('utf-8', 'ignore') if isinstance(k, unicode) else k
-        d[new_k] = d.pop(k)
-        d[k] = v.encode('utf-8', 'ignore') if isinstance(v, unicode) else v
-    return d
+def convert_temp(temp):
+    if temp:
+        return temp.get_text().split(' ')[1] + 'F'
+    return 'null'
 
 
 if __name__ == '__main__':
