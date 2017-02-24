@@ -2,16 +2,16 @@ import re
 from pprint import pprint
 import requests
 
+EVENTS_URL = 'http://www.geneseecounty911.org/events.php'
 
 def make_request():
     """Make request to get events.php"""
-    return requests.get('http://www.geneseecounty911.org/events.php').content
+    return requests.get(EVENTS_URL).content
 
 
 def find_events(text):
     """Find the active_events array in text and extra the data"""
-    pattern = re.compile(
-        r"events\[\d*\] = new Array\('(\w*)', '(\d*\/\d*)', '([\d:]*)[^A-Z]*([A-Z]*)', '([\d*.]*)', '(-?[\d.]*)', '([^']*)', '([^']*)")
+    pattern = compile_regex()
     active_events = []
     for m in re.finditer(pattern, text):
         d = {
@@ -25,6 +25,13 @@ def find_events(text):
         }
         active_events.append(d)
     return active_events
+
+
+def compile_regex():
+    pattern = re.compile(
+        r"events\[\d*\] = new Array\('(\w*)', '(\d*\/\d*)', '([\d:]*)[^A-Z]*([A-Z]*)', '([\d*.]*)', '(-?[\d.]*)', '([^']*)', '([^']*)"
+    )
+    return pattern
 
 
 def print_events():
