@@ -1,4 +1,4 @@
-# code_samples
+# Code Samples
 ### A few samples of the code I write
 
 
@@ -57,5 +57,5 @@ Given a list (lst) and a number (N), create a new list that contains each number
 Various other little snippets of code I have written
 
 #### 1.py 
-##### 3 quick challenges I was given for an interview
+3 quick challenges I was given for an interview
 
