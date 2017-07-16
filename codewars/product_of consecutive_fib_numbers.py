@@ -33,8 +33,8 @@
 def make_fib(a=0, b=1):
     "Generator to return numbers in the Fibonacci Sequence"
     while True:
-        a, b = b, a + b
         yield (a, b)
+        a, b = b, a + b
 
 
 def productFib(prod):
